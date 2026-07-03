@@ -1,0 +1,321 @@
+/* =========================================================================
+   Formo — Design System (master spec §7: "Kertas modern")
+   Light mode default, mobile-first, vanilla CSS custom properties.
+   ========================================================================= */
+
+:root {
+  /* --- Palette (master spec §7) --- */
+  --bg-primary: #faf9f6;
+  --bg-secondary: #ffffff;
+  --surface: #f2f0ea;
+  --border: #e5e1d8;
+  --accent-primary: #3b3a6b;
+  --accent-hover: #2c2b54;
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6862;
+  --danger: #b4432e;
+  --success: #3e7c55;
+  --caution: #8a6a1f; /* banner extractionNotes */
+
+  /* --- Typography --- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+  --text-xs: 0.78rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.6rem;
+  --line-tight: 1.25;
+  --line-base: 1.6;
+
+  /* --- Spacing (4px base) --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* --- Radius / shadow / layout --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(26, 26, 24, 0.05);
+  --shadow-md: 0 6px 24px rgba(26, 26, 24, 0.08);
+  --container-max: 960px;
+  --header-h: 60px;
+}
+
+/* --- Reset --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--line-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: var(--line-tight);
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: var(--text-xl);
+}
+h2 {
+  font-size: var(--text-lg);
+}
+
+a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 550;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* --- Utilities --- */
+.muted {
+  color: var(--text-secondary);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.6rem 1.1rem;
+  background-color: var(--accent-primary);
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.9rem;
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background-color: var(--surface);
+  border-color: var(--text-secondary);
+}
+
+/* --- Form fields --- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.field > span {
+  font-weight: 550;
+  color: var(--text-secondary);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 18%, transparent);
+}
+
+/* --- Card --- */
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- App shell --- */
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-4);
+  background-color: color-mix(in srgb, var(--bg-primary) 85%, transparent);
+  backdrop-filter: saturate(1.1) blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: var(--text-lg);
+  letter-spacing: -0.01em;
+  color: var(--accent-primary);
+}
+
+.app-main {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  flex: 1;
+}
+
+/* --- Auth --- */
+.auth-wrap {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.auth-title {
+  margin-bottom: calc(var(--space-2) * -1);
+}
+
+.auth-alt {
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* --- Banner (info / status) --- */
+.banner {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--text-secondary);
+  background-color: var(--surface);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.banner-caution {
+  border-left-color: var(--caution);
+  background-color: color-mix(in srgb, var(--caution) 12%, var(--bg-secondary));
+  color: color-mix(in srgb, var(--caution) 75%, var(--text-primary));
+}
+
+.banner-danger {
+  border-left-color: var(--danger);
+  background-color: color-mix(in srgb, var(--danger) 10%, var(--bg-secondary));
+  color: color-mix(in srgb, var(--danger) 72%, var(--text-primary));
+}
+
+.banner-success {
+  border-left-color: var(--success);
+  background-color: color-mix(in srgb, var(--success) 12%, var(--bg-secondary));
+  color: color-mix(in srgb, var(--success) 72%, var(--text-primary));
+}
+
+/* --- Responsive (mobile-first → larger) --- */
+@media (min-width: 640px) {
+  .app-header {
+    padding: 0 var(--space-6);
+  }
+
+  .app-main {
+    padding: var(--space-8) var(--space-6);
+  }
+}
