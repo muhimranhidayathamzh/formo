@@ -12,6 +12,7 @@ type Props = {
   formatText: string;
   onFormatTextChange: (value: string) => void;
   initialReferencePath: string | null;
+  onReferenceChange?: (hasReference: boolean) => void;
 };
 
 /** Section collapsible "Aturan format? (opsional)": instruksi teks + contoh dokumen.
@@ -21,6 +22,7 @@ export function FormatInput({
   formatText,
   onFormatTextChange,
   initialReferencePath,
+  onReferenceChange,
 }: Props) {
   const supabase = useMemo(() => createClient(), []);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,6 +64,7 @@ export function FormatInput({
 
       await setReferenceFile(documentId, path);
       setReferencePath(path);
+      onReferenceChange?.(true);
     } catch {
       setError("Gagal mengupload contoh dokumen.");
     } finally {
@@ -75,6 +78,7 @@ export function FormatInput({
     try {
       await clearReferenceFile(documentId);
       setReferencePath(null);
+      onReferenceChange?.(false);
     } catch {
       setError("Gagal menghapus contoh dokumen.");
     } finally {

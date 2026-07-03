@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import { updateDocument, type DocumentPatch } from "@/lib/actions/documents";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
@@ -43,6 +44,14 @@ export function DocumentEditor(props: Props) {
   const [assets, setAssets] = useState<EditorAsset[]>(props.initialAssets);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
 
+  const [hasReference, setHasReference] = useState(
+    props.initialReferencePath !== null,
+  );
+  const [structuring, setStructuring] = useState(false);
+  const [structureError, setStructureError] = useState<string | null>(null);
+  const [structuredOk, setStructuredOk] = useState(false);
+
+  const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const pendingPatch = useRef<DocumentPatch>({});
 
@@ -128,6 +137,38 @@ export function DocumentEditor(props: Props) {
     [],
   );
 
+  const handleStructure = async () => {
+    setStructureError(null);
+    setStructuredOk(false);
+    setStructuring(true);
+    try {
+      await flush(); // pastikan edit terakhir tersimpan sebelum AI membacanya
+      const res = await fetch("/api/structure", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ documentId: docId }),
+      });
+      const data: unknown = await res.json();
+      if (!res.ok) {
+        const message =
+          typeof data === "object" &&
+          data !== null &&
+          "error" in data &&
+          typeof (data as { error?: unknown }).error === "string"
+            ? (data as { error: string }).error
+            : "Gagal merapikan dokumen.";
+        setStructureError(message);
+        return;
+      }
+      setStructuredOk(true);
+      router.refresh();
+    } catch {
+      setStructureError("Gagal terhubung ke server. Coba lagi.");
+    } finally {
+      setStructuring(false);
+    }
+  };
+
   return (
     <div className="editor stack">
       <div className="editor-topbar">
@@ -158,17 +199,41 @@ export function DocumentEditor(props: Props) {
         formatText={formatText}
         onFormatTextChange={handleFormatText}
         initialReferencePath={props.initialReferencePath}
+        onReferenceChange={setHasReference}
       />
 
       <div className="editor-footer card">
         <WordingToggle checked={autoClean} onChange={handleToggle} />
         <div className="editor-footer__action">
-          <button type="button" className="btn" disabled title="Aktif di Phase 3">
-            ✨ Rapikan Dokumen
+          <button
+            type="button"
+            className="btn"
+            onClick={handleStructure}
+            disabled={structuring}
+          >
+            {structuring
+              ? hasReference
+                ? "Menganalisis referensi…"
+                : "Merapikan…"
+              : "✨ Rapikan Dokumen"}
           </button>
-          <span className="muted format-hint">Fitur AI aktif di Phase 3.</span>
+          {structuring && hasReference ? (
+            <span className="muted format-hint">
+              Bisa 5–15 detik untuk file referensi.
+            </span>
+          ) : null}
         </div>
       </div>
+
+      {structureError ? (
+        <div className="banner banner-danger">{structureError}</div>
+      ) : null}
+      {structuredOk ? (
+        <div className="banner banner-success">
+          Dokumen berhasil dirapikan. Preview & export menyusul di fase
+          berikutnya.
+        </div>
+      ) : null}
     </div>
   );
 }
