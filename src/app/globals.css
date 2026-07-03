@@ -576,6 +576,186 @@ select:focus {
   width: auto;
 }
 
+/* =========================================================================
+   Phase 4 — Preview & Template Families
+   ========================================================================= */
+
+.editor-layout {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* --- Preview toolbar (chips / badge) --- */
+.preview-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.preview-toolbar__label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.family-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.family-chip {
+  padding: 0.28rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.family-chip:hover {
+  border-color: var(--text-secondary);
+}
+
+.family-chip--active {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.format-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.format-badge__label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.preview-notes {
+  font-size: var(--text-sm);
+}
+
+/* --- The "paper" --- */
+.preview-paper {
+  width: 100%;
+  max-width: 794px; /* ~A4 lebar @96dpi */
+  margin: 0 auto;
+  background-color: #fff;
+  color: #111;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  overflow-wrap: break-word;
+}
+
+.preview-title {
+  line-height: 1.25;
+}
+
+.preview-paper p {
+  margin: 0;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 10pt;
+  font-size: 0.95em;
+}
+
+.preview-table th,
+.preview-table td {
+  border: 1px solid #bbb;
+  padding: 4pt 6pt;
+  text-align: left;
+  vertical-align: top;
+}
+
+.preview-table th {
+  background-color: #f2f2f2;
+  font-weight: 700;
+}
+
+.preview-figure {
+  margin: 10pt 0;
+  text-align: center;
+}
+
+.preview-img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+}
+
+.preview-img-missing {
+  padding: var(--space-4);
+  border: 1px dashed #bbb;
+  color: #888;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.preview-figure figcaption {
+  margin-top: 4pt;
+  font-size: 0.85em;
+  color: #555;
+  font-style: italic;
+}
+
+.preview-quote {
+  margin: 10pt 0;
+  padding-left: 12pt;
+  border-left: 3px solid #ccc;
+  color: #333;
+  font-style: italic;
+}
+
+.preview-quote cite {
+  display: block;
+  margin-top: 4pt;
+  font-size: 0.85em;
+  font-style: normal;
+  color: #666;
+}
+
+.preview-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 12pt 0;
+}
+
+.preview-pagebreak {
+  margin: 14pt 0;
+  border-top: 1px dashed #aaa;
+  text-align: center;
+  font-size: 0.75em;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-top: 4pt;
+}
+
 /* --- Responsive (mobile-first → larger) --- */
 @media (min-width: 640px) {
   .app-header {
@@ -584,5 +764,16 @@ select:focus {
 
   .app-main {
     padding: var(--space-8) var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .editor-layout--split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .editor-layout--split .preview-pane {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
   }
 }

@@ -3,12 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { DocumentRow } from "@/types/database";
+import type { DocumentRow, Json } from "@/types/database";
+import {
+  BASE_FAMILIES,
+  formatProfileSchema,
+  type BaseFamily,
+} from "@/lib/format-profile";
 
 const IMAGE_BUCKET = "document-images";
 const REFERENCE_BUCKET = "format-references";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
+
+// Objek hasil Zod memang JSON-serializable; cast tunggal & bernama (zero any).
+function toJson<T>(value: T): Json {
+  return value as unknown as Json;
+}
 
 /** Field yang boleh di-update dari editor (auto-save). */
 export type DocumentPatch = Partial<
@@ -207,6 +217,62 @@ export async function clearReferenceFile(documentId: string) {
   const { error: updErr } = await supabase
     .from("documents")
     .update({ reference_file_path: null })
+    .eq("id", documentId);
+  if (updErr) throw updErr;
+}
+
+// ---------------------------------------------------------- format profile
+
+function isBaseFamily(value: string): value is BaseFamily {
+  return (BASE_FAMILIES as readonly string[]).includes(value);
+}
+
+/** Ganti template family (chip preview) — persist tanpa panggil AI ulang. */
+export async function setBaseFamily(documentId: string, family: string) {
+  if (!isBaseFamily(family)) throw new Error("Template family tidak valid.");
+  const { supabase } = await requireUser();
+
+  const { data: doc, error } = await supabase
+    .from("documents")
+    .select("format_profile")
+    .eq("id", documentId)
+    .maybeSingle();
+  if (error) throw error;
+  if (!doc) throw new Error("Dokumen tidak ditemukan.");
+
+  const parsed = formatProfileSchema.safeParse(doc.format_profile);
+  const profile = parsed.success
+    ? parsed.data
+    : { source: "default" as const, baseFamily: family };
+  const next = { ...profile, baseFamily: family };
+
+  const { error: updErr } = await supabase
+    .from("documents")
+    .update({ format_profile: toJson(next) })
+    .eq("id", documentId);
+  if (updErr) throw updErr;
+}
+
+/** Reset Format Profile kustom → default (baseFamily dipertahankan). */
+export async function resetFormatToDefault(documentId: string) {
+  const { supabase } = await requireUser();
+
+  const { data: doc, error } = await supabase
+    .from("documents")
+    .select("format_profile")
+    .eq("id", documentId)
+    .maybeSingle();
+  if (error) throw error;
+  if (!doc) throw new Error("Dokumen tidak ditemukan.");
+
+  const parsed = formatProfileSchema.safeParse(doc.format_profile);
+  const baseFamily: BaseFamily = parsed.success
+    ? parsed.data.baseFamily
+    : "report";
+
+  const { error: updErr } = await supabase
+    .from("documents")
+    .update({ format_profile: toJson({ source: "default", baseFamily }) })
     .eq("id", documentId);
   if (updErr) throw updErr;
 }
