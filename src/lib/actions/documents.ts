@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { DocumentRow, Json } from "@/types/database";
 import {
-  BASE_FAMILIES,
   formatProfileSchema,
+  isBaseFamily,
   type BaseFamily,
 } from "@/lib/format-profile";
 
@@ -222,10 +222,6 @@ export async function clearReferenceFile(documentId: string) {
 }
 
 // ---------------------------------------------------------- format profile
-
-function isBaseFamily(value: string): value is BaseFamily {
-  return (BASE_FAMILIES as readonly string[]).includes(value);
-}
 
 /** Ganti template family (chip preview) — persist tanpa panggil AI ulang. */
 export async function setBaseFamily(documentId: string, family: string) {

@@ -15,6 +15,10 @@ export const BASE_FAMILIES = [
 ] as const;
 export type BaseFamily = (typeof BASE_FAMILIES)[number];
 
+export function isBaseFamily(value: string): value is BaseFamily {
+  return (BASE_FAMILIES as readonly string[]).includes(value);
+}
+
 export const formatProfileSchema = z.object({
   source: z.enum(["default", "textInstruction", "exampleDocument", "combined"]),
   baseFamily: z.enum(BASE_FAMILIES),

@@ -6,6 +6,7 @@ import type { Block, DocumentModel } from "@/lib/document-model";
 import type { BaseFamily, FormatProfile } from "@/lib/format-profile";
 import { computeHeadingNumbers } from "@/lib/render/heading-numbering";
 import { resolveStyle, type ResolvedStyle } from "@/lib/render/template-styles";
+import { ExportButtons } from "./export-buttons";
 import { FormatBadge } from "./format-badge";
 import { NotesBanner } from "./notes-banner";
 
@@ -197,6 +198,16 @@ export function DocumentPreview({
           onReset={handleReset}
         />
       </div>
+
+      <ExportButtons
+        documentId={documentId}
+        family={activeFamily}
+        source={source}
+        title={documentModel.meta.title}
+        showNotesReminder={
+          source !== "default" && Boolean(formatProfile.extractionNotes)
+        }
+      />
 
       {source !== "default" && formatProfile.extractionNotes ? (
         <NotesBanner notes={formatProfile.extractionNotes} />
